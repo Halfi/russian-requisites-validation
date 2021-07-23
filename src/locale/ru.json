@@ -1,0 +1,18 @@
+{
+  "translation": {
+    "is_empty": "{{key, uppercase}} пустой",
+    "only_digits": "{{key, uppercase}} может состоять только из цифр",
+    "only_digits_and_letters": "{{key, uppercase}} может состоять из {{digits}} символов (цифр или заглавных букв латинского алфавита от A до Z)",
+    "wrong_length": "{{key, uppercase}} может состоять только из {{digits}} символов",
+    "wrong_format": "{{key, uppercase}} имеет неправильный формат",
+    "bik": "бик",
+    "inn": "инн",
+    "ogrn": "огрн",
+    "ogrnip": "огрнип",
+    "kpp": "кпп",
+    "ca": "к/с",
+    "rs": "р/с",
+    "snils": "снилс",
+    "or": "или"
+  }
+}

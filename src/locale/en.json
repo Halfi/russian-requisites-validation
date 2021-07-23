@@ -1,0 +1,18 @@
+{
+  "translation": {
+    "is_empty": "{{key, uppercase}} is empty",
+    "only_digits": "{{key, uppercase}} can contain only digits",
+    "only_digits_and_letters": "{{key, uppercase}} can contain only {{digits}} symbols (digits and uppercase letters from A to Z)",
+    "wrong_length": "{{key, uppercase}} can contain only {{digits}} symbols",
+    "wrong_format": "{{key, uppercase}} has wrong format",
+    "bik": "bik",
+    "inn": "inn",
+    "ogrn": "ogrn",
+    "ogrnip": "ogrnip",
+    "kpp": "kpp",
+    "ca": "c/a",
+    "rs": "c/a",
+    "snils": "snils",
+    "or": "or"
+  }
+}
