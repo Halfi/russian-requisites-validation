@@ -1,9 +1,9 @@
 import { InitOptions } from 'i18next';
-export interface IError {
-    code: ErrorCode;
-    message: string;
+export interface IResponse {
+    code: ResponseCode;
+    message?: string;
 }
-export declare enum ErrorCode {
+export declare enum ResponseCode {
     Success = 0,
     Empty = 1,
     WrongLength = 2,
@@ -12,21 +12,21 @@ export declare enum ErrorCode {
 }
 export interface IProps {
     strict?: boolean;
+    debug?: boolean;
 }
-export declare class Validator {
+export declare class Validation {
     private _locale?;
     private readonly _options?;
-    private constructor();
-    static getInstance(options?: IProps & InitOptions): Promise<Validator>;
+    constructor(options?: IProps & InitOptions);
     private static _validateLength;
-    Bik(bik: string, error: IError): boolean;
-    Inn(inn: string, error: IError): boolean;
-    Ogrn(ogrn: string, error: IError): boolean;
-    Ogrnip(ogrnip: string, error: IError): boolean;
-    Kpp(kpp: string, error: IError): boolean;
-    Ks(ca: string, bik: string, error: IError): boolean;
-    Rs(rs: string, bik: string, error: IError): boolean;
-    Snils(snils: string, error: IError): boolean;
+    Bik(bik: string): IResponse;
+    Inn(inn: string): IResponse;
+    Ogrn(ogrn: string): IResponse;
+    Ogrnip(ogrnip: string): IResponse;
+    Kpp(kpp: string): IResponse;
+    Ks(ca: string, bik: string): IResponse;
+    Rs(rs: string, bik: string): IResponse;
+    Snils(snils: string): IResponse;
     private _translate;
     private _validateEmpty;
     private _checkAccount;

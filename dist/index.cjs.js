@@ -48,20 +48,17 @@ var ru = {
 	translation: translation
 };
 
-exports.ErrorCode = void 0;
-(function (ErrorCode) {
-    ErrorCode[ErrorCode["Success"] = 0] = "Success";
-    ErrorCode[ErrorCode["Empty"] = 1] = "Empty";
-    ErrorCode[ErrorCode["WrongLength"] = 2] = "WrongLength";
-    ErrorCode[ErrorCode["WrongFormat"] = 3] = "WrongFormat";
-    ErrorCode[ErrorCode["WrongSecure"] = 4] = "WrongSecure";
-})(exports.ErrorCode || (exports.ErrorCode = {}));
-class Validator {
+exports.ResponseCode = void 0;
+(function (ResponseCode) {
+    ResponseCode[ResponseCode["Success"] = 0] = "Success";
+    ResponseCode[ResponseCode["Empty"] = 1] = "Empty";
+    ResponseCode[ResponseCode["WrongLength"] = 2] = "WrongLength";
+    ResponseCode[ResponseCode["WrongFormat"] = 3] = "WrongFormat";
+    ResponseCode[ResponseCode["WrongSecure"] = 4] = "WrongSecure";
+})(exports.ResponseCode || (exports.ResponseCode = {}));
+class Validation {
     constructor(options) {
         this._options = options;
-    }
-    static async getInstance(options) {
-        const instance = new Validator(options);
         const defaultResources = {
             en: en,
             ru: ru,
@@ -75,48 +72,52 @@ class Validator {
                 return value.toUpperCase();
             return value;
         };
-        instance._locale = await i18next__default['default'].init({
+        i18next__default['default']
+            .init({
             lng: 'en',
             ...options,
             interpolation: { ...{ format }, ...customInterpolation },
             resources: defaultResources,
-        });
-        return instance;
+        })
+            .then(instance => (this._locale = instance))
+            .catch(/* istanbul ignore next: i18next do not throw reject */ /* istanbul ignore next: i18next do not throw reject */ e => (options?.debug ? console.error(e) : null));
     }
     static _validateLength(val, len) {
         return !len.includes(val.length);
     }
-    Bik(bik, error) {
+    Bik(bik) {
+        const response = { code: exports.ResponseCode.Success };
         if (this._validateEmpty(bik)) {
-            error.code = exports.ErrorCode.Empty;
-            error.message = this._translate('is_empty', 'Field is empty', { key: this._translate('bik', 'BIK') });
-            return false;
+            response.code = exports.ResponseCode.Empty;
+            response.message = this._translate('is_empty', 'Field is empty', { key: this._translate('bik', 'BIK') });
+            return response;
         }
         else if (/[^0-9]/.test(bik)) {
-            error.code = exports.ErrorCode.WrongFormat;
-            error.message = this._translate('only_digits', 'Wrong format', { key: this._translate('bik', 'BIK') });
-            return false;
+            response.code = exports.ResponseCode.WrongFormat;
+            response.message = this._translate('only_digits', 'Wrong format', { key: this._translate('bik', 'BIK') });
+            return response;
         }
-        else if (Validator._validateLength(bik, [9])) {
-            this._fillLengthError([9], 'bik', 'BIK', error);
-            return false;
+        else if (Validation._validateLength(bik, [9])) {
+            this._fillLengthError([9], 'bik', 'BIK', response);
+            return response;
         }
-        return true;
+        return response;
     }
-    Inn(inn, error) {
+    Inn(inn) {
+        const response = { code: exports.ResponseCode.Success };
         if (this._validateEmpty(inn)) {
-            error.code = exports.ErrorCode.Empty;
-            error.message = this._translate('is_empty', 'Field is empty', { key: this._translate('inn', 'INN') });
-            return false;
+            response.code = exports.ResponseCode.Empty;
+            response.message = this._translate('is_empty', 'Field is empty', { key: this._translate('inn', 'INN') });
+            return response;
         }
         else if (/[^0-9]/.test(inn)) {
-            error.code = exports.ErrorCode.WrongFormat;
-            error.message = this._translate('only_digits', 'Wrong format', { key: this._translate('inn', 'INN') });
-            return false;
+            response.code = exports.ResponseCode.WrongFormat;
+            response.message = this._translate('only_digits', 'Wrong format', { key: this._translate('inn', 'INN') });
+            return response;
         }
-        else if (Validator._validateLength(inn, [10, 12])) {
-            this._fillLengthError([10, 12], 'inn', 'INN', error);
-            return false;
+        else if (Validation._validateLength(inn, [10, 12])) {
+            this._fillLengthError([10, 12], 'inn', 'INN', response);
+            return response;
         }
         const checkDigit = function (inn, coefficients, checkVal) {
             let n = 0;
@@ -126,100 +127,104 @@ class Validator {
             return (n % 11) % 10 === parseInt(checkVal);
         };
         if (inn.length === 10 && checkDigit(inn, [2, 4, 10, 3, 5, 9, 4, 6, 8], inn[9])) {
-            return true;
+            return response;
         }
         if (inn.length === 12 &&
             checkDigit(inn, [7, 2, 4, 10, 3, 5, 9, 4, 6, 8], inn[10]) &&
             checkDigit(inn, [3, 7, 2, 4, 10, 3, 5, 9, 4, 6, 8], inn[11])) {
-            return true;
+            return response;
         }
-        error.code = exports.ErrorCode.WrongSecure;
-        error.message = this._translate('wrong_format', 'Wrong format', { key: this._translate('inn', 'INN') });
-        return false;
+        response.code = exports.ResponseCode.WrongSecure;
+        response.message = this._translate('wrong_format', 'Wrong format', { key: this._translate('inn', 'INN') });
+        return response;
     }
-    Ogrn(ogrn, error) {
+    Ogrn(ogrn) {
+        const response = { code: exports.ResponseCode.Success };
         if (this._validateEmpty(ogrn)) {
-            error.code = exports.ErrorCode.Empty;
-            error.message = this._translate('is_empty', 'Field is empty', { key: this._translate('ogrn', 'OGRN') });
-            return false;
+            response.code = exports.ResponseCode.Empty;
+            response.message = this._translate('is_empty', 'Field is empty', { key: this._translate('ogrn', 'OGRN') });
+            return response;
         }
         else if (/[^0-9]/.test(ogrn)) {
-            error.code = exports.ErrorCode.WrongFormat;
-            error.message = this._translate('only_digits', 'Wrong format', { key: this._translate('ogrn', 'OGRN') });
-            return false;
+            response.code = exports.ResponseCode.WrongFormat;
+            response.message = this._translate('only_digits', 'Wrong format', { key: this._translate('ogrn', 'OGRN') });
+            return response;
         }
-        else if (Validator._validateLength(ogrn, [13])) {
-            this._fillLengthError([13], 'ogrn', 'OGRN', error);
-            return false;
+        else if (Validation._validateLength(ogrn, [13])) {
+            this._fillLengthError([13], 'ogrn', 'OGRN', response);
+            return response;
         }
         const n13 = parseInt((parseInt(ogrn.slice(0, -1)) % 11).toString().slice(-1));
         if (n13 !== parseInt(ogrn[12])) {
-            error.code = exports.ErrorCode.WrongSecure;
-            error.message = this._translate('wrong_format', 'Wrong format', { key: this._translate('ogrn', 'OGRN') });
-            return false;
+            response.code = exports.ResponseCode.WrongSecure;
+            response.message = this._translate('wrong_format', 'Wrong format', { key: this._translate('ogrn', 'OGRN') });
+            return response;
         }
-        return true;
+        return response;
     }
-    Ogrnip(ogrnip, error) {
+    Ogrnip(ogrnip) {
+        const response = { code: exports.ResponseCode.Success };
         if (this._validateEmpty(ogrnip)) {
-            error.code = exports.ErrorCode.Empty;
-            error.message = this._translate('is_empty', 'Field is empty', { key: this._translate('ogrnip', 'OGRNIP') });
-            return false;
+            response.code = exports.ResponseCode.Empty;
+            response.message = this._translate('is_empty', 'Field is empty', { key: this._translate('ogrnip', 'OGRNIP') });
+            return response;
         }
         else if (/[^0-9]/.test(ogrnip)) {
-            error.code = exports.ErrorCode.WrongFormat;
-            error.message = this._translate('only_digits', 'Wrong format', { key: this._translate('ogrnip', 'OGRNIP') });
-            return false;
+            response.code = exports.ResponseCode.WrongFormat;
+            response.message = this._translate('only_digits', 'Wrong format', { key: this._translate('ogrnip', 'OGRNIP') });
+            return response;
         }
-        else if (Validator._validateLength(ogrnip, [15])) {
-            this._fillLengthError([15], 'ogrnip', 'OGRNIP', error);
-            return false;
+        else if (Validation._validateLength(ogrnip, [15])) {
+            this._fillLengthError([15], 'ogrnip', 'OGRNIP', response);
+            return response;
         }
         const n15 = parseInt((parseInt(ogrnip.slice(0, -1)) % 13).toString().slice(-1));
         if (n15 !== parseInt(ogrnip[14])) {
-            error.code = exports.ErrorCode.WrongSecure;
-            error.message = this._translate('wrong_format', 'Wrong format', { key: this._translate('ogrnip', 'OGRNIP') });
-            return false;
+            response.code = exports.ResponseCode.WrongSecure;
+            response.message = this._translate('wrong_format', 'Wrong format', { key: this._translate('ogrnip', 'OGRNIP') });
+            return response;
         }
-        return true;
+        return response;
     }
-    Kpp(kpp, error) {
+    Kpp(kpp) {
+        const response = { code: exports.ResponseCode.Success };
         if (this._validateEmpty(kpp)) {
-            error.code = exports.ErrorCode.Empty;
-            error.message = this._translate('is_empty', 'Field is empty', { key: this._translate('kpp', 'KPP') });
-            return false;
+            response.code = exports.ResponseCode.Empty;
+            response.message = this._translate('is_empty', 'Field is empty', { key: this._translate('kpp', 'KPP') });
+            return response;
         }
-        else if (Validator._validateLength(kpp, [9])) {
-            this._fillLengthError([9], 'kpp', 'KPP', error);
-            return false;
+        else if (Validation._validateLength(kpp, [9])) {
+            this._fillLengthError([9], 'kpp', 'KPP', response);
+            return response;
         }
         else if (!/^[0-9]{4}[0-9A-Z]{2}[0-9]{3}$/.test(kpp)) {
-            error.code = exports.ErrorCode.WrongFormat;
-            error.message = this._translate('wrong_format', 'Wrong format', { key: this._translate('kpp', 'KPP') });
-            return false;
+            response.code = exports.ResponseCode.WrongFormat;
+            response.message = this._translate('wrong_format', 'Wrong format', { key: this._translate('kpp', 'KPP') });
+            return response;
         }
-        return true;
+        return response;
     }
-    Ks(ca, bik, error) {
-        return this._checkAccount(ca, bik, error, 'ca', 'C/A');
+    Ks(ca, bik) {
+        return this._checkAccount(ca, bik, 'ca', 'C/A');
     }
-    Rs(rs, bik, error) {
-        return this._checkAccount(rs, bik, error, 'rs', 'C/A');
+    Rs(rs, bik) {
+        return this._checkAccount(rs, bik, 'rs', 'C/A');
     }
-    Snils(snils, error) {
+    Snils(snils) {
+        const response = { code: exports.ResponseCode.Success };
         if (this._validateEmpty(snils)) {
-            error.code = exports.ErrorCode.Empty;
-            error.message = this._translate('is_empty', 'Field is empty', { key: this._translate('snils', 'SNILS') });
-            return false;
+            response.code = exports.ResponseCode.Empty;
+            response.message = this._translate('is_empty', 'Field is empty', { key: this._translate('snils', 'SNILS') });
+            return response;
         }
         else if (/[^0-9]/.test(snils)) {
-            error.code = exports.ErrorCode.WrongFormat;
-            error.message = this._translate('only_digits', 'Wrong format', { key: this._translate('snils', 'SNILS') });
-            return false;
+            response.code = exports.ResponseCode.WrongFormat;
+            response.message = this._translate('only_digits', 'Wrong format', { key: this._translate('snils', 'SNILS') });
+            return response;
         }
-        else if (Validator._validateLength(snils, [11])) {
-            this._fillLengthError([11], 'snils', 'SNILS', error);
-            return false;
+        else if (Validation._validateLength(snils, [11])) {
+            this._fillLengthError([11], 'snils', 'SNILS', response);
+            return response;
         }
         let sum = 0;
         for (let i = 0; i < 9; i++) {
@@ -236,48 +241,52 @@ class Validator {
             }
         }
         if (checkDigit !== parseInt(snils.slice(-2))) {
-            error.code = exports.ErrorCode.WrongSecure;
-            error.message = this._translate('wrong_format', 'Wrong format', { key: this._translate('snils', 'SNILS') });
-            return false;
+            response.code = exports.ResponseCode.WrongSecure;
+            response.message = this._translate('wrong_format', 'Wrong format', { key: this._translate('snils', 'SNILS') });
+            return response;
         }
-        return true;
+        return response;
     }
     _translate(key, defaultValue, options) {
         if (this._locale) {
             return this._locale(key, defaultValue, options);
+        }
+        else if (this._options?.debug) {
+            console.warn('i18next is not initialised');
         }
         return defaultValue;
     }
     _validateEmpty(val) {
         return !val.length || (!!this._options?.strict && parseInt(val) <= 0);
     }
-    _checkAccount(account, bik, error, translateKey, translateDefaultKey) {
-        if (this.Bik(bik, error)) {
+    _checkAccount(account, bik, translateKey, translateDefaultKey) {
+        const response = this.Bik(bik);
+        if (response.code === exports.ResponseCode.Success) {
             if (!account.length) {
-                error.code = exports.ErrorCode.Empty;
-                error.message = this._translate('is_empty', 'Field is empty', { key: this._translate(translateKey, translateDefaultKey) });
-                return false;
+                response.code = exports.ResponseCode.Empty;
+                response.message = this._translate('is_empty', 'Field is empty', { key: this._translate(translateKey, translateDefaultKey) });
+                return response;
             }
             else if (/[^0-9]/.test(account)) {
-                error.code = exports.ErrorCode.WrongFormat;
-                error.message = this._translate('only_digits', 'Wrong format', { key: this._translate(translateKey, translateDefaultKey) });
-                return false;
+                response.code = exports.ResponseCode.WrongFormat;
+                response.message = this._translate('only_digits', 'Wrong format', { key: this._translate(translateKey, translateDefaultKey) });
+                return response;
             }
-            else if (Validator._validateLength(account, [20])) {
-                this._fillLengthError([20], translateKey, 'C/A', error);
-                return false;
+            else if (Validation._validateLength(account, [20])) {
+                this._fillLengthError([20], translateKey, 'C/A', response);
+                return response;
             }
             else if (!this._validateBikChecksum(account, bik)) {
-                error.code = exports.ErrorCode.WrongSecure;
-                error.message = this._translate('wrong_format', 'Wrong format', { key: this._translate(translateKey, translateDefaultKey) });
-                return false;
+                response.code = exports.ResponseCode.WrongSecure;
+                response.message = this._translate('wrong_format', 'Wrong format', { key: this._translate(translateKey, translateDefaultKey) });
+                return response;
             }
         }
-        return true;
+        return response;
     }
-    _fillLengthError(len, fieldName, defaultFieldName, error) {
-        error.code = exports.ErrorCode.WrongLength;
-        error.message = this._translate('wrong_length', 'Wrong length', {
+    _fillLengthError(len, fieldName, defaultFieldName, response) {
+        response.code = exports.ResponseCode.WrongLength;
+        response.message = this._translate('wrong_length', 'Wrong length', {
             key: this._translate(fieldName, defaultFieldName),
             digits: this._concatDigitsLength(len),
         });
@@ -299,4 +308,4 @@ class Validator {
     }
 }
 
-exports.Validator = Validator;
+exports.Validation = Validation;

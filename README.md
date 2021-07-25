@@ -27,29 +27,27 @@ npm i russian-requisites-validation
 ### Typescript
 
 ```typescript
-import { Validator, IError, ErrorCode } from 'russian-requisites-validation';
+import { ResponseCode, Validation } from 'russian-requisites-validation'
 
-const error: IError = { code: ErrorCode.Success, message: '' };
-const v = await Validator.getInstance({ lng: 'ru' });
-const valid = v.Inn(value, error);
+const validation = new Validation({ lng: 'ru' });
+const response = validation.Inn(value);
 
-console.log('valid: ', valid);
-console.log('error: ', error.message);
-console.log('error code: ', error.code);
+console.log('valid: ', response === ResponseCode.Success);
+console.log('error: ', response.message);
+console.log('error code: ', response.code);
 ```
 
 ### EcmaScript
 
 ```ecmascript 6
-import { Validator, IError, ErrorCode } from 'russian-requisites-validation';
+import { ResponseCode, Validation } from 'russian-requisites-validation'
 
-const error = {};
-const v = await Validator.getInstance({ lng: 'ru' });
-const valid = v.Inn(value, error);
+const validation = new Validation({ lng: 'ru' });
+const response = validation.Inn(value);
 
-console.log('valid: ', valid);
-console.log('error: ', error.message);
-console.log('error code: ', error.code);
+console.log('valid: ', response === ResponseCode.Success);
+console.log('error: ', response.message);
+console.log('error code: ', response.code);
 ```
 
 ## License
