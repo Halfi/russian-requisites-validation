@@ -10,9 +10,7 @@ jobs:
   CodeQL-Build:
     name: CodeQL build
     runs-on: ubuntu-latest
-    if: |
-      github.event_name != 'pull_request' ||
-      (github.event_name == 'pull_request' && !(startsWith(github.head_ref, 'dependabot')))
+    if: ${{ !(startsWith(github.head_ref, 'dependabot')) }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
