@@ -72,7 +72,7 @@ class Validation {
                 return value.toUpperCase();
             return value;
         };
-        i18next__default['default']
+        i18next__default["default"]
             .init({
             lng: 'en',
             ...options,
