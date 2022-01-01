@@ -80,7 +80,8 @@ class Validation {
             resources: defaultResources,
         })
             .then(instance => (this._locale = instance))
-            .catch(/* istanbul ignore next: i18next do not throw reject */ /* istanbul ignore next: i18next do not throw reject */ e => (options?.debug ? console.error(e) : null));
+            /* istanbul ignore next: i18next do not throw reject */
+            .catch(e => ((options === null || options === void 0 ? void 0 : options.debug) ? console.error(e) : null));
     }
     static _validateLength(val, len) {
         return !len.includes(val.length);
@@ -248,16 +249,18 @@ class Validation {
         return response;
     }
     _translate(key, defaultValue, options) {
+        var _a;
         if (this._locale) {
             return this._locale(key, defaultValue, options);
         }
-        else if (this._options?.debug) {
+        else if ((_a = this._options) === null || _a === void 0 ? void 0 : _a.debug) {
             console.warn('i18next is not initialised');
         }
         return defaultValue;
     }
     _validateEmpty(val) {
-        return !val.length || (!!this._options?.strict && parseInt(val) <= 0);
+        var _a;
+        return !val.length || (!!((_a = this._options) === null || _a === void 0 ? void 0 : _a.strict) && parseInt(val) <= 0);
     }
     _checkAccount(account, bik, translateKey, translateDefaultKey) {
         const response = this.Bik(bik);

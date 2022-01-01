@@ -50,7 +50,8 @@ export class Validation {
         resources: defaultResources,
       })
       .then(instance => (this._locale = instance))
-      .catch(/* istanbul ignore next: i18next do not throw reject */ e => (options?.debug ? console.error(e) : null));
+      /* istanbul ignore next: i18next do not throw reject */
+      .catch(e => (options?.debug ? console.error(e) : null));
   }
 
   private static _validateLength(val: string, len: number[]): boolean {
